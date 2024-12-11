@@ -1,0 +1,3 @@
+FROM python:3.11.2
+
+EXPOSE 5000 5001 5002
