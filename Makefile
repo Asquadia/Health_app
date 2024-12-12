@@ -1,49 +1,52 @@
-# Name of the virtual environment directory
-VENV_DIR := python_micro_azure.venv
+# Makefile for managing the microservice application
+
+.PHONY: init test run_backend run_bmi_service run_bmr_service run_all clean build_docker run_docker
+
+# Virtual environment directory
+VENV_DIR := venv
 
 # Path to the Python interpreter inside the virtual environment
 VENV_PYTHON := $(VENV_DIR)/bin/python3
 
-# Rule to create the virtual environment
-create:
-	@if [ ! -d "$(VENV_DIR)" ]; then \
-		echo "Creating virtual environment in $(VENV_DIR)..."; \
-		python3 -m venv $(VENV_DIR); \
-		echo "Virtual environment created successfully."; \
-	else \
-		echo "Virtual environment already exists at $(VENV_DIR)."; \
-	fi
+# Init target to create venv and install dependencies
+init: $(VENV_PYTHON)
+	$(VENV_PYTHON) -m pip install -r requirements.txt
 
-# Rule to install dependencies
-install: venv
-	@if [ -f "requirements.txt" ]; then \
-		echo "Installing dependencies from requirements.txt into $(VENV_DIR)..."; \
-		"$(VENV_PYTHON)" -m pip install --upgrade pip; \
-		"$(VENV_PYTHON)" -m pip install -r requirements.txt; \
-		echo "Dependencies installed successfully into virtual environment."; \
-	else \
-		echo "requirements.txt not found. Skipping installation."; \
-	fi
+# Create the virtual environment if it doesn't exist
+$(VENV_PYTHON):
+	python3 -m venv $(VENV_DIR)
 
-# Rule to check if the virtual environment exists
-check:
-	@if [ -d "$(VENV_DIR)" ]; then \
-		echo "Virtual environment exists at $(VENV_DIR)"; \
-	else \
-		echo "Virtual environment does not exist. Run 'make venv' to create it."; \
-	fi
+# Test target to run tests using unittest
+test: $(VENV_PYTHON)
+	$(VENV_PYTHON) test/app.py
 
-# Rule to activate and enter the virtual environment
-run: venv
-	@echo "Activating virtual environment $(VENV_DIR)..."
-	@bash -c "source $(VENV_DIR)/bin/activate && echo 'Entered virtual environment. Use '\''deactivate'\'' to exit.' && bash"
+# Target to run the backend service
+run_backend: $(VENV_PYTHON)
+	$(VENV_PYTHON) backend/app.py
 
-# Rule to clean the virtual environment
+# Target to run the BMI service
+run_bmi_service: $(VENV_PYTHON)
+	$(VENV_PYTHON) bmi_service/app.py
+
+# Target to run the BMR service
+run_bmr_service: $(VENV_PYTHON)
+	$(VENV_PYTHON) bmr_service/app.py
+
+# Target to run all services in the background
+run_all: build_docker run_docker
+	# start the container in detached mode
+
+# Clean target to remove temporary files
 clean:
-	@if [ -d "$(VENV_DIR)" ]; then \
-		echo "Removing virtual environment $(VENV_DIR)..."; \
-		rm -rf $(VENV_DIR); \
-	else \
-		echo "Virtual environment does not exist."; \
-	fi
-.PHONY: venv check_venv install run clean Makefile
+	rm -rf __pycache__
+	rm -rf $(VENV_DIR)
+	find . -name "*.pyc" -delete
+	find . -name "*.pyo" -delete
+
+# Target to build the Docker image
+build_docker:
+	docker build -t health-app .
+
+# Target to run the Docker container
+run_docker:
+	docker run -d -p 5000:5000 -p 5001:5001 -p 5002:5002 --name health-app-container health-app
