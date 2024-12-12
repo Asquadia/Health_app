@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_from_directory
 import requests
 
-app = Flask(__name__, static_folder='../frontend')  # Serve static files from 'frontend'
+app = Flask(__name__, static_folder='../frontend')
 
 BMI_SERVICE_URL = 'http://localhost:5001'
 BMR_SERVICE_URL = 'http://localhost:5002'

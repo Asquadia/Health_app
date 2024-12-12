@@ -4,7 +4,7 @@ PYTHON_VENV = /app/venv
 DOCKER_IMAGE_NAME = my-health-app
 DOCKER_CONTAINER_NAME = my-health-app-container
 
-# Build 
+# Build
 build:
 	docker build -t $(DOCKER_IMAGE_NAME) -f Dockerfile .
 
@@ -25,7 +25,8 @@ stop:
 	docker stop $(DOCKER_CONTAINER_NAME)
 
 # Run tests
-test: $(VENV_PYTHON)
+test:
+	$(PYTHON_INTERPRETER) test/app.py
 	$(VENV_PYTHON) test/app.py
 
 # Menage
