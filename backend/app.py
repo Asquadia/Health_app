@@ -47,9 +47,9 @@ def api_calculate_bmr():
     except requests.exceptions.RequestException as e:
         return jsonify({'error': f'Error contacting BMR service: {e}'}), 500
 
-@app.route('/', methods=['GET'])
+@app.route('/')
 def index():
-    return jsonify({"message": "Welcome to the Health API. Use /bmi or /bmr endpoints."})
+    return send_from_directory('../frontend', 'index.html')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)  # Run on port 5000
