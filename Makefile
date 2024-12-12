@@ -8,7 +8,7 @@ DOCKER_CONTAINER_NAME = my-health-app-container
 build:
 	docker build -t $(DOCKER_IMAGE_NAME) -f Dockerfile .
 
-# y a ecrit build bordel et install
+# init all the component
 init: build
 	docker run -it --rm --name $(DOCKER_CONTAINER_NAME) $(DOCKER_IMAGE_NAME) bash -c \
 	"source $(PYTHON_VENV)/bin/activate && pip install -r requirements.txt"
