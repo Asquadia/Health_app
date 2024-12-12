@@ -1,37 +1,26 @@
-# Variables
-PYTHON_INTERPRETER = python
-PYTHON_VENV = /app/venv
 DOCKER_IMAGE_NAME = my-health-app
 DOCKER_CONTAINER_NAME = my-health-app-container
+PYTHON_INTERPRETER = ./venv/bin/python
+VENV_PYTHON = /app/venv/bin/python
 
-# Build
 build:
-	docker build -t $(DOCKER_IMAGE_NAME) -f Dockerfile .
+	docker build -t $(DOCKER_IMAGE_NAME) .
 
-# init all the component
-init: build
-	docker run -it --rm --name $(DOCKER_CONTAINER_NAME) $(DOCKER_IMAGE_NAME) bash -c \
-	"source $(PYTHON_VENV)/bin/activate && pip install -r requirements.txt"
-
-# Lance tout
 run_all:
 	docker run -d \
 	--name $(DOCKER_CONTAINER_NAME) \
 	-p 5000:5000 -p 5001:5001 -p 5002:5002 \
 	$(DOCKER_IMAGE_NAME)
 
-# STOP
 stop:
-	docker stop $(DOCKER_CONTAINER_NAME)
+	docker stop $(DOCKER_CONTAINER_NAME) || true
 
-# Run tests
+clean: stop
+	docker rm $(DOCKER_CONTAINER_NAME) || true
+	docker rmi $(DOCKER_IMAGE_NAME) || true
+
 test:
 	$(PYTHON_INTERPRETER) test/app.py
-	$(VENV_PYTHON) test/app.py
+	docker exec $(DOCKER_CONTAINER_NAME) $(VENV_PYTHON) test/app.py
 
-# Menage
-clean: stop
-	docker rmi $(DOCKER_IMAGE_NAME)
-	rm -rf $(PYTHON_VENV)
-
-.PHONY: build init run_all stop clean test
+.PHONY: build run_all stop clean test
