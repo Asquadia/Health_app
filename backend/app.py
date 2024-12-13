@@ -1,10 +1,11 @@
+import os
 from flask import Flask, request, jsonify, send_from_directory
 import requests
 
 app = Flask(__name__, static_folder='../frontend')
 
-BMI_SERVICE_URL = 'http://localhost:5001'
-BMR_SERVICE_URL = 'http://localhost:5002'
+BMI_SERVICE_URL = os.environ.get('BMI_SERVICE_URL', 'http://localhost:5001')  # Default for local
+BMR_SERVICE_URL = os.environ.get('BMR_SERVICE_URL', 'http://localhost:5002')  # Default for local
 
 @app.route('/api/bmi', methods=['GET'])
 def api_calculate_bmi():
