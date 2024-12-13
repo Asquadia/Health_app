@@ -5,9 +5,27 @@
 # Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
+image: docker:latest
+
+services:
+  - docker:dind
+
+variables:
+  DOCKER_IMAGE_NAME: my-health-app
+  DOCKER_CONTAINER_NAME: my-health-app-container
+
 stages:
-- test
-sast:
+  - build
+  - test
+
+build_image:
+  stage: build
+  script:
+    - docker build -t $DOCKER_IMAGE_NAME .
+
+run_tests:
   stage: test
-include:
-- template: Security/SAST.gitlab-ci.yml
+  script:
+    - make run_all
+    - make test
+    - make stop
