@@ -29,10 +29,13 @@ jobs:
       - name: Prepare the backend, bmi and bmr for deployment
         run: |
           mkdir -p static
-          cp -r backend/* .
-          cp -r bmi_service/* .
-          cp -r bmr_service/* .
+          cp -r backend/* backend/
+          cp -r bmi_service/* bmi_service/
+          cp -r bmr_service/* bmr_service/
           cp -r frontend/* static/
+          rm backend/Dockerfile
+          rm bmi_service/Dockerfile
+          rm bmr_service/Dockerfile
           
 
       - name: Zip artifact for deployment
