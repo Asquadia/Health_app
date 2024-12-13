@@ -1,10 +1,12 @@
 from flask import Flask, request, jsonify, send_from_directory
 import requests
+import os
 
-app = Flask(__name__, static_folder='../frontend')
+app = Flask(__name__, static_folder='static')
 
-BMI_SERVICE_URL = 'http://localhost:5001'
-BMR_SERVICE_URL = 'http://localhost:5002'
+# Get service URLs from environment variables or use defaults for local testing
+BMI_SERVICE_URL = os.environ.get('BMI_SERVICE_URL', 'http://localhost:5001')
+BMR_SERVICE_URL = os.environ.get('BMR_SERVICE_URL', 'http://localhost:5002')
 
 @app.route('/api/bmi', methods=['GET'])
 def api_calculate_bmi():
@@ -49,7 +51,7 @@ def api_calculate_bmr():
 
 @app.route('/')
 def index():
-    return send_from_directory('../frontend', 'index.html')
+    return send_from_directory('static', 'index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)  # Run on port 5000
+    app.run(host='0.0.0.0', port=5000)
