@@ -4,18 +4,15 @@ from unittest.mock import patch, MagicMock
 import sys
 import os
 
-# Grab le directory
+# Adjust the path to include the parent directory of 'test'
 test_dir = os.path.dirname(os.path.abspath(__file__))
-# /
 project_dir = os.path.dirname(test_dir)
-# sys
 sys.path.insert(0, project_dir)
 
-# import
+# Import using direct module names since they are in the project root in the container
 from backend.app import app as backend_app
 from bmi_service.bmi import app as bmi_service_app
 from bmr_service.bmr import app as bmr_service_app
-
 
 class TestBackendAPI(unittest.TestCase):
     def setUp(self):
@@ -113,7 +110,6 @@ class TestBackendAPI(unittest.TestCase):
         self.assertEqual(returned_value, expected_value)
 
         self.print_test_info(service, endpoint, input_values, expected_value, returned_value)
-
 
 if __name__ == '__main__':
     unittest.main()
