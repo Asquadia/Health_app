@@ -11,6 +11,6 @@ ENV PATH="/app/venv/bin:$PATH"
 
 COPY . /app
 
-EXPOSE 5000 5001 5002
+EXPOSE 5000
 
 CMD ["/bin/bash", "/app/start.sh"]
