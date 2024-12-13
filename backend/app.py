@@ -1,57 +1,62 @@
 from flask import Flask, request, jsonify, send_from_directory
-import requests
+import sys
 import os
 
-app = Flask(__name__, static_folder='static')
+# Get the current directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# Get the parent directory (project root)
+project_dir = os.path.dirname(current_dir)
+# Add the project root to sys.path
+sys.path.append(project_dir)
 
-# Get service URLs from environment variables or use defaults for local testing
-BMI_SERVICE_URL = os.environ.get('BMI_SERVICE_URL', 'http://localhost:5001')
-BMR_SERVICE_URL = os.environ.get('BMR_SERVICE_URL', 'http://localhost:5002')
+from bmi_service.bmi import bmi
+from bmr_service.bmr import bmr
+
+app = Flask(__name__, static_folder='../frontend')
 
 @app.route('/api/bmi', methods=['GET'])
 def api_calculate_bmi():
     """
-    endpoint to calculate BMI with the BMI service
+    Endpoint to calculate BMI.
     """
-    weight = request.args.get('weight')
-    height = request.args.get('height')
+    weight = request.args.get('weight', type=float)
+    height = request.args.get('height', type=float)
 
-    if not weight or not height:
+    if weight is None or height is None:
         return jsonify({'error': 'Weight and height are required parameters.'}), 400
 
     try:
-        response = requests.get(f'{BMI_SERVICE_URL}/bmi?weight={weight}&height={height}')
-        response.raise_for_status()  # Raise an exception for bad status codes
-        return jsonify(response.json())
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': f'Error contacting BMI service: {e}'}), 500
+        bmi_result = bmi(weight, height)
+        return jsonify({'bmi': bmi_result})
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except TypeError as e:
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/api/bmr', methods=['GET'])
 def api_calculate_bmr():
     """
-    endpoint to calculate BMR, with the BMR service
+    Endpoint to calculate BMR.
     """
-    weight = request.args.get('weight')
-    height = request.args.get('height')
-    age = request.args.get('age')
+    weight = request.args.get('weight', type=float)
+    height = request.args.get('height', type=float)
+    age = request.args.get('age', type=int)
     gender = request.args.get('gender')
 
-    if not weight or not height or not age or not gender:
+    if weight is None or height is None or age is None or gender is None:
         return jsonify({'error': 'Weight, height, age, and gender are required parameters.'}), 400
 
     try:
-        # Forward the request to the BMR service
-        response = requests.get(f'{BMR_SERVICE_URL}/bmr?weight={weight}&height={height}&age={age}&gender={gender}')
-        response.raise_for_status()
-
-        return jsonify(response.json())
-
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': f'Error contacting BMR service: {e}'}), 500
+        bmr_result = bmr(weight, height, age, gender)
+        return jsonify({'bmr': bmr_result})
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except TypeError as e:
+        return jsonify({'error': str(e)}), 400
 
 @app.route('/')
 def index():
-    return send_from_directory('static', 'index.html')
+    return send_from_directory('../frontend', 'index.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
