@@ -1,15 +1,14 @@
 import unittest
-import requests
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import sys
 import os
 
-# Adjust the path to include the parent directory of 'test'
+# Adjust the path to include the project root directory
 test_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.dirname(test_dir)
 sys.path.insert(0, project_dir)
 
-# Import using direct module names since they are in the project root in the container
+# Import using direct module names since they are in the project root
 from backend.app import app as backend_app
 from bmi_service.bmi import bmi
 from bmr_service.bmr import bmr
