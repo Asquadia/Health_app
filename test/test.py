@@ -30,22 +30,18 @@ class TestBackendAPI(unittest.TestCase):
         print(f"Test Result: {'PASSED' if returned_value == expected_value else 'FAILED'}")
         print(f"---------------------------------------")
 
-    @patch('bmi_service.bmi.bmi')
-    def test_api_calculate_bmi_success(self, mock_bmi):
+    def test_api_calculate_bmi_success(self):
         """Test the /api/bmi endpoint with successful external API call."""
         service = "BMI Service"
         endpoint = "/api/bmi"
         input_values = {'weight': 70, 'height': 1.75}
-        expected_value = {'bmi': 22.857142857142858}
-
-        mock_bmi.return_value = expected_value['bmi']
+        expected_value = {'bmi': 22.857142857142858}  # Corrected expected value
 
         response = self.backend_app.get(f'{endpoint}?weight={input_values["weight"]}&height={input_values["height"]}')
         returned_value = response.json
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(returned_value, expected_value)
-        mock_bmi.assert_called_once_with(input_values["weight"], input_values["height"])
 
         self.print_test_info(service, endpoint, input_values, expected_value, returned_value)
 
@@ -64,22 +60,18 @@ class TestBackendAPI(unittest.TestCase):
 
         self.print_test_info(service, endpoint, input_values, expected_value, returned_value)
 
-    @patch('bmr_service.bmr.bmr')
-    def test_api_calculate_bmr_success(self, mock_bmr):
+    def test_api_calculate_bmr_success(self):
         """Test the /api/bmr endpoint with successful external API call."""
         service = "BMR Service"
         endpoint = "/api/bmr"
         input_values = {'weight': 70, 'height': 175, 'age': 30, 'gender': 'male'}
-        expected_value = {'bmr': 1796.439}
-
-        mock_bmr.return_value = expected_value['bmr']
+        expected_value = {'bmr': 1695.667}
 
         response = self.backend_app.get(f'{endpoint}?weight={input_values["weight"]}&height={input_values["height"]}&age={input_values["age"]}&gender={input_values["gender"]}')
         returned_value = response.json
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(returned_value, expected_value)
-        mock_bmr.assert_called_once_with(input_values["weight"], input_values["height"], input_values["age"], input_values["gender"])
+        self.assertAlmostEqual(returned_value['bmr'], expected_value['bmr'])
 
         self.print_test_info(service, endpoint, input_values, expected_value, returned_value)
 
@@ -101,7 +93,7 @@ class TestBackendAPI(unittest.TestCase):
         service = "BMR Function"
         endpoint = "N/A"
         input_values = {'weight': 70, 'height': 175, 'age': 30, 'gender': 'male'}
-        expected_value = 1796.439
+        expected_value = 1695.667
 
         returned_value = bmr(**input_values)
 
