@@ -13,8 +13,8 @@ sys.path.insert(0, project_dir)
 
 # import
 from backend.app import app as backend_app
-from bmi_service.app import app as bmi_service_app
-from bmr_service.app import app as bmr_service_app
+from bmi_service.bmi import app as bmi_service_app
+from bmr_service.bmr import app as bmr_service_app
 
 
 class TestBackendAPI(unittest.TestCase):
