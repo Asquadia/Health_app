@@ -22,6 +22,6 @@ clean: stop
 	docker rmi $(DOCKER_IMAGE_NAME) || true
 
 test:
-	docker exec $(DOCKER_CONTAINER_NAME) bash -c "source $(VENV_ACTIVATE) && $(VENV_PYTHON) test/app.py"
+	docker exec $(DOCKER_CONTAINER_NAME) bash -c "source $(VENV_ACTIVATE) && $(VENV_PYTHON) test/test.py"
 
 .PHONY: build run_all stop clean test
