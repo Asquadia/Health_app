@@ -34,6 +34,7 @@ jobs:
 
       - name: Prepare the backend for deployment
         run: |
+          mkdir -p static
           cp -r backend/* .
           cp -r frontend/* static/
           
@@ -80,4 +81,4 @@ jobs:
         with:
           app-name: 'HealAapp'
           slot-name: 'Production'
-          startup-command: 'gunicorn --chdir ./backend app:app'
+          startup-command: 'cd backend && gunicorn app:app'
