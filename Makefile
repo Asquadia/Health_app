@@ -2,6 +2,8 @@ DOCKER_IMAGE_NAME = my-health-app
 DOCKER_CONTAINER_NAME = my-health-app-container
 PYTHON_INTERPRETER = ./venv/bin/python
 VENV_PYTHON = /app/venv/bin/python
+VENV_ACTIVATE = /app/venv/bin/activate # Full path to activate script
+
 
 build:
 	docker build -t $(DOCKER_IMAGE_NAME) .
@@ -20,7 +22,6 @@ clean: stop
 	docker rmi $(DOCKER_IMAGE_NAME) || true
 
 test:
-	$(PYTHON_INTERPRETER) test/app.py
-	docker exec $(DOCKER_CONTAINER_NAME) $(VENV_PYTHON) test/app.py
+	docker exec $(DOCKER_CONTAINER_NAME) bash -c "source $(VENV_ACTIVATE) && $(VENV_PYTHON) test/app.py"
 
 .PHONY: build run_all stop clean test
