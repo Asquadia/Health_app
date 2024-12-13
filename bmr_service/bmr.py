@@ -1,39 +1,26 @@
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
-
 def bmr(weight, height, age, gender):
-    """Calculates BMR"""
-    result = 0
-    if gender.lower() == "male":
-        result = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
-    elif gender.lower() == "female":
-        result = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
-    else:
-        return None  # Invalid gender
-    return result
+    """Calculates BMR given weight, height, age, and gender.
 
-@app.route('/bmr', methods=['GET'])
-def calculate_bmr():
-    """
-    Calculates BMR based on weight, height, age, and gender
-    """
-    weight = request.args.get('weight', type=float)
-    height = request.args.get('height', type=float)
-    age = request.args.get('age', type=int)
-    gender = request.args.get('gender')
+    Args:
+        weight: Weight in kilograms (float).
+        height: Height in centimeters (float).
+        age: Age in years (int).
+        gender: Gender ("male" or "female", string).
 
-    if not weight or not height or not age or not gender:
-        return jsonify({'error': 'Weight, height, age, and gender are required parameters.'}), 400
-    
+    Returns:
+        The calculated BMR (float) or None if inputs are invalid.
+    """
+    if not (isinstance(weight, (int, float)) and isinstance(height, (int, float)) and isinstance(age, int)):
+        raise TypeError("Weight and height must be numbers, and age must be an integer.")
+    if not isinstance(gender, str):
+        raise TypeError("Gender must be a string.")
     if weight <= 0 or height <= 0 or age <= 0:
-        return jsonify({'error': 'Weight, height, and age must be positive values.'}), 400
+        raise ValueError("Weight, height, and age must be positive values.")
 
-    bmr_result = bmr(weight, height, age, gender)
-    if bmr_result is None:
-        return jsonify({'error': 'Invalid gender. Please specify "male" or "female".'}), 400
-
-    return jsonify({'bmr': bmr_result})
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5002)
+    gender = gender.lower()
+    if gender == "male":
+        return 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
+    elif gender == "female":
+        return 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
+    else:
+        raise ValueError('Invalid gender. Please specify "male" or "female".')
