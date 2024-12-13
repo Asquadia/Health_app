@@ -1,27 +1,15 @@
-from flask import Flask, request, jsonify
-
-app = Flask(__name__)
-
 def bmi(weight, height):
-    """Calc BMI"""
-    return weight / (height * height)
+    """Calculates BMI given weight and height.
 
-@app.route('/bmi', methods=['GET'])
-def calculate_bmi():
+    Args:
+        weight: Weight in kilograms (float).
+        height: Height in meters (float).
+
+    Returns:
+        The calculated BMI (float) or None if inputs are invalid.
     """
-    Calculates BMI based on weight and height
-    """
-    weight = request.args.get('weight', type=float)
-    height = request.args.get('height', type=float)
-
-    if not weight or not height:
-        return jsonify({'error': 'Weight and height are required parameters.'}), 400
-
+    if not (isinstance(weight, (int, float)) and isinstance(height, (int, float))):
+        raise TypeError("Weight and height must be numbers.")
     if weight <= 0 or height <= 0:
-        return jsonify({'error': 'Weight and height must be positive values.'}), 400
-
-    bmi_result = bmi(weight, height)
-    return jsonify({'bmi': bmi_result})
-
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5001)
+        raise ValueError("Weight and height must be positive values.")
+    return weight / (height * height)
