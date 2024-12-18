@@ -23,15 +23,11 @@ jobs:
 
       - name: Copy services to the app directory
         run: |
-                cp -r backend/* app/
-                cp -r bmi_service/* app/
-                cp -r bmr_service/* app/
-                mkdir app/static
-                cp -r frontend/* app/static/
-                cp frontend/index.html app/static/
-                cp requirements.txt app/ # Add this line to copy requirements.txt
-                # Add any other necessary files
-
+                cp -r backend/* .
+                cp -r bmi_service/* .
+                cp -r bmr_service/* .
+                cp -r frontend/* .
+                
       - name: Create and start virtual environment
         run: |
           python -m venv venv
@@ -89,4 +85,4 @@ jobs:
         with:
           app-name: 'HealthA'
           slot-name: 'Production'
-          startup-command: './app/startup.sh' # Point to startup script in app
+          startup-command: 'gunicorn backend.app:app'
