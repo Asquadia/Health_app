@@ -26,8 +26,8 @@ jobs:
           cp -r backend/* app/
           cp -r bmi_service/* app/
           cp -r bmr_service/* app/
-          cp -r frontend/* app/static/
           mkdir app/static
+          cp -r frontend/* app/static/
           cp frontend/index.html app/static/ # Assuming index.html is in frontend root
           # Add any other necessary files
 
