@@ -23,13 +23,14 @@ jobs:
 
       - name: Copy services to the app directory
         run: |
-          cp -r backend/* app/
-          cp -r bmi_service/* app/
-          cp -r bmr_service/* app/
-          mkdir app/static
-          cp -r frontend/* app/static/
-          cp frontend/index.html app/static/ # Assuming index.html is in frontend root
-          # Add any other necessary files
+                cp -r backend/* app/
+                cp -r bmi_service/* app/
+                cp -r bmr_service/* app/
+                mkdir app/static
+                cp -r frontend/* app/static/
+                cp frontend/index.html app/static/
+                cp requirements.txt app/ # Add this line to copy requirements.txt
+                # Add any other necessary files
 
       - name: Create and start virtual environment
         run: |
